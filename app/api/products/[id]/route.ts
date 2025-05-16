@@ -23,10 +23,11 @@ const mockProducts: IProduct[] = Array.from({ length: 50 }, (_, i) => {
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     const product = mockProducts.find((p) => p.id === id);
 
     if (!product) {
@@ -48,10 +49,11 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     const updates = await request.json();
 
     const index = mockProducts.findIndex((p) => p.id === id);
@@ -84,10 +86,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = params.id;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
 
     const index = mockProducts.findIndex((p) => p.id === id);
 

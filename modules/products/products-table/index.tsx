@@ -85,10 +85,7 @@ export function ProductsTable({
       cell: ({ row }) => (
         <div className="flex justify-center">
           <Avatar className="h-10 w-10">
-            <AvatarImage
-              src={row.original.image}
-              alt={row.original.name}
-            />
+            <AvatarImage src={row.original.image} alt={row.original.name} />
             <AvatarFallback>
               <ImageIcon className="h-4 w-4" />
             </AvatarFallback>
