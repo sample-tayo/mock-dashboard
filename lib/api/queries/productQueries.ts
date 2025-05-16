@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ProductService } from "@/http/services/product-service";
 import { queryKeys } from "@/lib/api/queryKeys";
 import type { UseQueryOptions } from "@tanstack/react-query";

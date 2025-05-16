@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
   createProductMutation,
   deleteProductMutation,
@@ -14,16 +14,13 @@ export function useProductActions() {
     ...createProductMutation({
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
-        toast({
-          title: "Product created",
+        toast.success("Product created", {
           description: "Your product has been created successfully.",
         });
       },
       onError: () => {
-        toast({
-          title: "Error",
+        toast.error("Error", {
           description: "Failed to create product. Please try again.",
-          variant: "destructive",
         });
       },
     }),
@@ -33,16 +30,13 @@ export function useProductActions() {
     ...updateProductMutation({
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
-        toast({
-          title: "Product updated",
+        toast.success("Product updated", {
           description: "Your product has been updated successfully.",
         });
       },
       onError: () => {
-        toast({
-          title: "Error",
+        toast.error("Error", {
           description: "Failed to update product. Please try again.",
-          variant: "destructive",
         });
       },
     }),
@@ -52,16 +46,13 @@ export function useProductActions() {
     ...deleteProductMutation({
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
-        toast({
-          title: "Product deleted",
+        toast.success("Product deleted", {
           description: "The product has been deleted successfully.",
         });
       },
       onError: () => {
-        toast({
-          title: "Error",
+        toast.error("Error", {
           description: "Failed to delete product. Please try again.",
-          variant: "destructive",
         });
       },
     }),
@@ -69,8 +60,7 @@ export function useProductActions() {
 
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast({
-      title: "ID Copied",
+    toast.info("ID Copied", {
       description: `Product ID ${id} copied to clipboard.`,
       duration: 2000,
     });

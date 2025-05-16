@@ -8,7 +8,7 @@ import { useProductActions } from "@/hooks/useProductActions";
 import type { IProduct } from "@/types/product";
 import { formatCurrency } from "@/utils/format-utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -40,14 +40,14 @@ export function ProductsGrid({
   const [editProduct, setEditProduct] = useState<IProduct | null>(null);
   const [viewProduct, setViewProduct] = useState<IProduct | null>(null);
   const [deleteProductData, setDeleteProductData] = useState<IProduct | null>(
-    null,
+    null
   );
   const pageSize = 12; // More products per page for grid view
 
   const { handleCopyId, deleteProduct } = useProductActions();
 
   const { data, isLoading, isError } = useQuery(
-    getProductsQuery(currentPage, pageSize, searchQuery, categoryFilter),
+    getProductsQuery(currentPage, pageSize, searchQuery, categoryFilter)
   );
 
   const products = data?.products || [];
@@ -69,75 +69,103 @@ export function ProductsGrid({
 
   return (
     <div className="space-y-6 p-6">
-      <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {products.map((product) => (
           <Card
             key={product.id}
-            className="overflow-hidden transition-all hover:shadow-md"
+            className="group overflow-hidden rounded-lg pt-0 shadow-sm transition-all hover:shadow-md"
           >
-            <div className="aspect-square w-full overflow-hidden">
-              <Image
-                src={product.image || "/sample.jpg"}
-                alt={product.name}
-                width={500}
-                height={500}
-                className="h-full w-full object-cover transition-transform hover:scale-105"
-              />
+            <div className="relative">
+              {/* Image container with aspect ratio */}
+              <div className="aspect-square w-full overflow-hidden">
+                <Image
+                  src={product.image || "/sample.jpg"}
+                  alt={product.name}
+                  width={300}
+                  height={300}
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              {/* Category badge overlay */}
+              <Badge
+                variant="secondary"
+                className="absolute left-2 top-2 bg-background/80 backdrop-blur-sm"
+              >
+                {product.category}
+              </Badge>
+
+              {/* Action menu */}
+              <div className="absolute right-2 top-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="h-8 w-8 bg-background/80 backdrop-blur-sm"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Actions</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => handleCopyId(product.id)}>
+                      <Copy className="mr-2 h-4 w-4" />
+                      Copy ID
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setViewProduct(product)}>
+                      <Eye className="mr-2 h-4 w-4" />
+                      View Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setEditProduct(product)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={() => setDeleteProductData(product)}
+                    >
+                      <Trash className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
+
             <CardContent className="p-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="px-2 py-1 text-xs">
-                    {product.category}
-                  </Badge>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Actions</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem
-                        onClick={() => handleCopyId(product.id)}
-                      >
-                        <Copy className="mr-2 h-4 w-4" />
-                        Copy ID
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setViewProduct(product)}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setEditProduct(product)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={() => setDeleteProductData(product)}
-                      >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <h3 className="line-clamp-1 text-base font-medium">
+                    {product.name}
+                  </h3>
+                  <p className="font-semibold">
+                    {formatCurrency(product.price)}
+                  </p>
                 </div>
-                <h3 className="line-clamp-1 text-lg font-semibold">
-                  {product.name}
-                </h3>
-                <p className="line-clamp-2 text-sm text-muted-foreground">
+                <p className="line-clamp-1 text-xs text-muted-foreground">
                   {product.description}
                 </p>
+                <div className="flex items-center justify-between pt-1">
+                  <Badge
+                    variant={product.stock > 10 ? "outline" : "destructive"}
+                    className="px-2 py-0 text-xs"
+                  >
+                    {product.stock} in stock
+                  </Badge>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    onClick={() => setViewProduct(product)}
+                  >
+                    View Details
+                  </Button>
+                </div>
               </div>
             </CardContent>
-            <CardFooter className="flex items-center justify-between border-t p-4">
-              <div className="font-medium">{formatCurrency(product.price)}</div>
-              <Badge variant={product.stock > 10 ? "default" : "destructive"}>
-                {product.stock} in stock
-              </Badge>
-            </CardFooter>
           </Card>
         ))}
       </div>
